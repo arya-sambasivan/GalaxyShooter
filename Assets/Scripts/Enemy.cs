@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    // Start is called before the first frame update
+    
     [SerializeField]
     float _speed = 4;
 
-    // Update is called once per frame.
     void Update()
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);

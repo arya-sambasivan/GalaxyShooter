@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // Start is called before the first frame update
     public float speed = 3.5f;
     [SerializeField] GameObject laserPrefab;
     [SerializeField] private GameObject tripleShotPrefab;
-    //[SerializeField] private GameObject powerupPrefab;
     [SerializeField] float _fireRate = 0.5f;
     float _canFire = -1;
     [SerializeField]
@@ -27,7 +25,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         CalculatePlayerMovement();

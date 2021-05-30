@@ -8,8 +8,6 @@ public class Laser : MonoBehaviour
 
     [SerializeField]
     float _speed = 8;
-
-    // Update is called once per frame
     void Update()
     {
         transform.Translate(Vector3.up*_speed*Time.deltaTime);
