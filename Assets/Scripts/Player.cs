@@ -9,22 +9,46 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject laserPrefab;
     [SerializeField] private GameObject tripleShotPrefab;
     [SerializeField] float _fireRate = 0.5f;
+    [SerializeField] private  GameObject ShieldVisualizer;
     float _canFire = -1;
     [SerializeField]
     private int _lives = 3;
     private SpawnManager _spawnManager;
     private bool _isTripleShotActive = false;
     private bool _isSpeedBoostActive = false;
-    private bool isShieldActive = false;
+    private bool _isShieldActive = false;
+    [SerializeField]
+    private GameObject _rightEngine, _leftEngine;
+
+    [SerializeField]
+    private int _score;
+    private UIManager _uiManager;
+
+    [SerializeField]
+    private AudioClip _laserSoundClip;
+    private AudioSource _audioSource;
 
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
-
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        _audioSource = GetComponent<AudioSource>();
         if(_spawnManager == null)
         {
             Debug.Log("SpawnManager is NULL");
+        }
+        if (_uiManager == null)
+        {
+            Debug.Log("UIManager is NULL");
+        }
+        if (_audioSource == null)
+        {
+            Debug.Log("Audio Source is NULL");
+        }
+        else
+        {
+            _audioSource.clip = _laserSoundClip;
         }
     }
 
@@ -74,12 +98,25 @@ public class Player : MonoBehaviour
         {
             Instantiate(laserPrefab, transform.position + new Vector3(0, 0.9f, 0), Quaternion.identity);
         }
-        
-           
+
+        _audioSource.Play();   
     }
     public void Damage()
     {
+        if(_isShieldActive==true)
+        {
+            ShieldVisualizer.SetActive(false);
+            _isShieldActive = false;
+            return;
+        }
         _lives--;
+
+        if (_lives == 2)
+            _leftEngine.SetActive(true);
+        else if (_lives == 1)
+            _rightEngine.SetActive(true);
+
+        _uiManager.UpdateLives(_lives);
         if(_lives<1)
         {
             _spawnManager.OnPlayerDeath();
@@ -110,6 +147,16 @@ public class Player : MonoBehaviour
         _isSpeedBoostActive = false;
         speed /= _speedMultiplier;
 
+    }
+    public void ShieldsActive()
+    {
+        _isShieldActive = true;
+        ShieldVisualizer.SetActive(true);
+    }
+    public void AddScore(int points)
+    {
+        _score += points;
+        _uiManager.UpdateScore(_score);
     }
 }
  

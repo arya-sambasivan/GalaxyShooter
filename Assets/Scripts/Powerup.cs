@@ -7,11 +7,10 @@ public class Powerup : MonoBehaviour
     [SerializeField] private float _speed = 3.0f;
     [SerializeField]
     private int powerUpID;
-    void Start()
-    {
 
-    }
-
+    [SerializeField]
+    private AudioClip _clip;
+   
     void Update()
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
@@ -26,6 +25,7 @@ public class Powerup : MonoBehaviour
       if(other.tag == "Player")
         {
             Player player = other.transform.GetComponent<Player>();
+            AudioSource.PlayClipAtPoint(_clip, transform.position);
             if(player != null)
             {
                 switch(powerUpID)
@@ -37,7 +37,7 @@ public class Powerup : MonoBehaviour
                         player.SpeedBoostActive();
                         break;
                     case 2:
-                        Debug.Log("Collected shield");
+                        player.ShieldsActive();
                         break;
                     default:
                         Debug.Log("Default value");
