@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    
     public float speed = 3.5f;
     private float _speedMultiplier = 2;
     [SerializeField] GameObject laserPrefab;
@@ -23,6 +24,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _score;
     private UIManager _uiManager;
+    private GameManager _gameManger;
 
     [SerializeField]
     private AudioClip _laserSoundClip;
@@ -30,10 +32,13 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        transform.position = new Vector3(0, 0, 0);
+        
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        _gameManger = GameObject.Find("GameManager").GetComponent<GameManager>();
         _audioSource = GetComponent<AudioSource>();
+        transform.position = new Vector3(0, 0, 0);
+        
         if(_spawnManager == null)
         {
             Debug.Log("SpawnManager is NULL");
@@ -60,7 +65,6 @@ public class Player : MonoBehaviour
             FireLaser();
         }
 
-
     }
     void CalculatePlayerMovement()
     {
@@ -85,7 +89,7 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(-9, transform.position.y, 0);
         }
     }
-
+    
     void FireLaser()
     {
        
@@ -101,6 +105,7 @@ public class Player : MonoBehaviour
 
         _audioSource.Play();   
     }
+    
     public void Damage()
     {
         if(_isShieldActive==true)
@@ -120,6 +125,7 @@ public class Player : MonoBehaviour
         if(_lives<1)
         {
             _spawnManager.OnPlayerDeath();
+            _uiManager.CheckForBestScore();
             Destroy(this.gameObject);
         }
     }
@@ -137,6 +143,8 @@ public class Player : MonoBehaviour
     }
     public void SpeedBoostActive()
     {
+        if(_isSpeedBoostActive==true)
+            speed /= _speedMultiplier;
         _isSpeedBoostActive = true;
         speed *= _speedMultiplier;
         StartCoroutine(SpeedBoostPowerDownRoutine());
@@ -144,6 +152,8 @@ public class Player : MonoBehaviour
     IEnumerator SpeedBoostPowerDownRoutine()
     {
         yield return new WaitForSeconds(5.0f);
+        if(_isSpeedBoostActive==false)
+            speed *= _speedMultiplier;
         _isSpeedBoostActive = false;
         speed /= _speedMultiplier;
 

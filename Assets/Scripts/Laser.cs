@@ -4,21 +4,59 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
-   
-
     [SerializeField]
-    float _speed = 8;
+    private float _speed = 8;
+    private bool _isEnemyLaser = false;
     void Update()
     {
-        transform.Translate(Vector3.up*_speed*Time.deltaTime);
-        if(transform.position.y>=6.75f)
+        if (_isEnemyLaser == false)
         {
-            if(transform.parent!=null)
+            MoveUp();
+        }
+        else
+        {
+            moveDown();
+        }
+    }
+    void MoveUp()
+    {
+        transform.Translate(Vector3.up * _speed * Time.deltaTime);
+        if (transform.position.y >= 6.75f)
+        {
+            if (transform.parent != null)
             {
                 Destroy(transform.parent.gameObject);
             }
             Destroy(this.gameObject);
         }
-        
+    }
+    void moveDown()
+    {
+        transform.Translate(Vector3.down* _speed * Time.deltaTime);
+        if (transform.position.y < -6.75f)
+        {
+            if (transform.parent != null)
+            {
+                Destroy(transform.parent.gameObject);
+            }
+            Destroy(this.gameObject);
+        }
+    }
+
+    public void AssignEnemyLaser()
+    {
+        _isEnemyLaser = true;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.tag=="Player" && _isEnemyLaser==true)
+        {
+            Player player = other.GetComponent<Player>();
+            if(player != null)
+            {
+                player.Damage();
+            }
+        }
     }
 }
